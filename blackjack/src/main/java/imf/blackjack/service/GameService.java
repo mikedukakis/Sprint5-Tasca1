@@ -17,7 +17,7 @@ public class GameService {
 
     public Mono<Game> createNewGame(String playerName) {
         Player player = new Player(new ObjectId().toHexString(), playerName);
-        Game game = new Game(/new ObjectId().toHexString(), player);
+        Game game = new Game(new ObjectId().toHexString(), player);
         return gameRepository.save(game);
     }
 
