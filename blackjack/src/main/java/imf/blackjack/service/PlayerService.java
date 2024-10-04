@@ -21,4 +21,8 @@ public class PlayerService {
                     return playerRepository.save(player);
                 });
     }
+
+    public Flux<Player> getPlayerRanking() {
+        return playerRepository.findPlayersOrderedByWins();
+    }
 }
