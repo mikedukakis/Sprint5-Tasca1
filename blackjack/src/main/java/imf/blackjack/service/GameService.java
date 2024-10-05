@@ -32,12 +32,12 @@ public class GameService {
                 .flatMap(gameRepository::delete);
     }
 
-    public Mono<Game> makeMove(String gameId, String moveType) {
-        return gameRepository.findById(gameId)
-                .switchIfEmpty(Mono.error(new GameNotFoundException("Game not found with ID: " + gameId)))
-                .flatMap(game -> {
-                    processMove(game, moveType);
-                    return gameRepository.save(game);
-                });
-    }
+//    public Mono<Game> makeMove(String gameId, String moveType) {
+//        return gameRepository.findById(gameId)
+//                .switchIfEmpty(Mono.error(new GameNotFoundException("Game not found with ID: " + gameId)))
+//                .flatMap(game -> {
+//                    processMove(game, moveType);
+//                    return gameRepository.save(game);
+//                });
+//    }
 }

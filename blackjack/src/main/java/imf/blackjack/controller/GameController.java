@@ -25,10 +25,10 @@ public class GameController {
         return gameService.getGameDetails(id);
     }
 
-    @PostMapping("/{id}/play")
-    public Mono<Game> makeMove(@PathVariable String id, @RequestBody String moveType) {
-        return gameService.makeMove(id, moveType);
-    }
+//    @PostMapping("/{id}/play")
+//    public Mono<Game> makeMove(@PathVariable String id, @RequestBody String moveType) {
+//        return gameService.makeMove(id, moveType);
+//    }
 
     @DeleteMapping("/{id}/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
