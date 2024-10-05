@@ -75,7 +75,14 @@
 			<scope>test</scope>
 		</dependency>
 
-<!--Lombok-->
+<!--Documentation (Swagger)-->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+		<!--Lombok-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
