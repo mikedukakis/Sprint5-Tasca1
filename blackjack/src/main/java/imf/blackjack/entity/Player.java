@@ -1,8 +1,10 @@
 package imf.blackjack.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
+@Schema(description = "Player entity representing game participants")
 public class Player {
     private static short nextId = 0;
     private short id;
