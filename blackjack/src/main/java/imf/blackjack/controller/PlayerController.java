@@ -14,6 +14,11 @@ import reactor.core.publisher.Mono;
 public class PlayerController {
     private final PlayerService playerService;
 
+    @PostMapping("/create")
+    public Mono<Player> createPlayer(String playerName) {
+        return playerService.createPlayer(playerName);
+    }
+
     @PutMapping("/{playerId}")
     public Mono<Player> changePlayerName(@PathVariable String playerId, @RequestBody String newName) {
         return playerService.changePlayerName(playerId, newName);

@@ -13,6 +13,11 @@ import reactor.core.publisher.Mono;
 public class PlayerService {
     private final PlayerRepository playerRepository;
 
+    public Mono<Player> createPlayer(String playerName) {
+        Player newPlayer = new Player(playerName);
+        return playerRepository.save(newPlayer);
+    }
+
     public Mono<Player> changePlayerName(String playerId, String newName) {
         return playerRepository.findById(playerId)
                 .switchIfEmpty(Mono.error(new PlayerNotFoundException("Player not found with Id " + playerId)))
