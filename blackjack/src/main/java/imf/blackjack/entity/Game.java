@@ -11,14 +11,18 @@ public class Game {
     private Dealer dealer;
     private Deck deck;
     private String winner;
+    private boolean isGameOver;
 
-    public Game(String id, Player player) {
-        this.id = id;
+    public Game(Player player) {
         this.player = player;
         this.dealer = new Dealer();
         this.deck = new Deck();
-        this.winner = null;
+        this.isGameOver = false;
     }
 
+    public void endGame(String winner) {
+        this.isGameOver = true;
+        this.winner = winner;
+    }
 
 }

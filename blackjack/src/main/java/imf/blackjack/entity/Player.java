@@ -9,6 +9,7 @@ public class Player {
     private static short nextId = 0;
     private short id;
     private String name;
+    private Hand hand;
     private short wins;
     private short losses;
 
