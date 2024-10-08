@@ -2,23 +2,38 @@ package imf.blackjack.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 @Data
 @Schema(description = "Player entity representing game participants")
+@Table
 public class Player {
-    private static short nextId = 0;
-    private short id;
+    @Id
+    private int id;
+
+    @Column("name")
     private String name;
+    @Column("wins")
+    private int wins;
+    @Column("losses")
+    private int losses;
+
+    @Transient
     private Hand hand;
-    private short wins;
-    private short losses;
+
 
     public Player(String name) {
-        this.id = ++nextId;
-        nextId = this.id;
         this.name = name;
-        this.wins = (short)0;
-        this.losses = (short)0;
+        this.wins = 0;
+        this.losses = 0;
+    }
+
+    public Player(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     @Override
