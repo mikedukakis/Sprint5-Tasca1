@@ -33,12 +33,6 @@ public class GameService {
                 .switchIfEmpty(Mono.error(new GameNotFoundException("Game not found with ID: " + gameId)));
     }
 
-    public Mono<Void> deleteGame(String gameId) {
-        return gameRepository.findById(gameId)
-                .switchIfEmpty(Mono.error(new GameNotFoundException("Game not found with ID: " + gameId)))
-                .flatMap(gameRepository::delete);
-    }
-
     private void dealInitialCards(Game game) {
         Deck deck = game.getDeck();
 
@@ -84,15 +78,47 @@ public class GameService {
         int dealerScore = calculateScore(game.getDealer().getHand());
         int playerScore = calculateScore(game.getPlayer().getHand());
 
+        String winner;
         if (dealerScore > 21 || playerScore > dealerScore) {
+            winner = "player";
             game.endGame("player");
+        } else if (playerScore == dealerScore) {
+            winner = "tie";
+            game.endGame("tie");
         } else {
+            winner = "dealer";
             game.endGame("dealer");
         }
-        return gameRepository.save(game);
+
+        return gameRepository.save(game)
+                .flatMap(savedGame -> {
+                    return updatePlayerStats(game.getPlayer().getId(), winner)
+                            .thenReturn(savedGame);
+                });
     }
+
+    private Mono<Void> updatePlayerStats(String playerId, String winner) {
+        return playerRepository.findById(playerId)
+                .flatMap(player -> {
+                    if ("player".equals(winner)) {
+                        player.setWins(player.getWins() + 1);
+                    } else if ("dealer".equals(winner)) {
+                        player.setLosses(player.getLosses() + 1);
+                    }
+                    return playerRepository.save(player);
+                })
+                .then();
+    }
+
 
     private int calculateScore(Hand hand) {
         return hand.getScore();
     }
+
+    public Mono<Void> deleteGame(String gameId) {
+        return gameRepository.findById(gameId)
+                .switchIfEmpty(Mono.error(new GameNotFoundException("Game not found with ID: " + gameId)))
+                .flatMap(gameRepository::delete);
+    }
+
 }

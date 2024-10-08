@@ -3,7 +3,7 @@ package imf.blackjack.entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table
 public class Player {
     @Id
-    private int id;
+    private String id;
 
     @Column("name")
     private String name;
@@ -21,7 +21,7 @@ public class Player {
     @Column("losses")
     private int losses;
 
-    @Transient
+    @Field
     private Hand hand;
 
     public Player() {
@@ -35,7 +35,7 @@ public class Player {
         this.hand = new Hand();
     }
 
-    public Player(int id, String name) {
+    public Player(String id, String name) {
         this.id = id;
         this.name = name;
         this.hand = new Hand();

@@ -29,7 +29,7 @@ public class PlayerController {
     @Operation(summary = "Update the name of a player", description = "Update the name of a player using the player ID.")
     @ApiResponse(responseCode = "200", description = "Player updated successfully")
     @PutMapping("/{playerId}")
-    public Mono<Player> changePlayerName(@PathVariable String playerId, @RequestBody String newName) {
+    public Mono<Player> changePlayerName(@PathVariable String playerId, @RequestParam String newName) {
         return playerService.changePlayerName(playerId, newName);
     }
 

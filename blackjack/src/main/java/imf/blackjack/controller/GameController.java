@@ -29,11 +29,11 @@ public class GameController {
     @ApiResponse(responseCode = "200", description = "Details provided successfully")
     @ApiResponse(responseCode = "500", description = "Couldn't access the details")
     @GetMapping("/{gameId}")
-    public Mono<Game> getGameDetails(@PathVariable String gameId) {
+    public Mono<Game> getGameDetails(@RequestParam String gameId) {
         return gameService.getGameDetails(gameId);
     }
 
-    @Operation(summary = "Make a move", description = "Make a move in the game")
+    @Operation(summary = "Make a move", description = "Make a move in the game ('HIT' or 'STAND'")
     @ApiResponse(responseCode = "200", description = "Make a move and get result of move and current state of game")
     @PutMapping("/{gameId}/move")
     public Mono<Game> makeMove(@PathVariable String gameId, @RequestParam String move) {
@@ -41,9 +41,10 @@ public class GameController {
     }
 
     @Operation(summary = "Delete an existing game", description = "Delete a game using the game Id")
+    @ApiResponse(responseCode = "200", description = "Game has been deleted correctly")
     @ApiResponse(responseCode = "204", description = "No content if the game has been deleted correctly")
     @DeleteMapping("/{gameId}/delete")
-    public Mono<Void> deleteGame(@PathVariable String id) {
+    public Mono<Void> deleteGame(@RequestParam String id) {
         return gameService.deleteGame(id);
     }
 
