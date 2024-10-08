@@ -20,6 +20,7 @@ public class PlayerController {
 
     @Operation(summary = "Create a new player", description = "Creates a new player with the name given.")
     @ApiResponse(responseCode = "201", description = "Player created successfully")
+    @ApiResponse(responseCode = "500", description = "Player couldn't be created")
     @PostMapping("/create")
     public Mono<Player> createPlayer(String playerName) {
         return playerService.createPlayer(playerName);
