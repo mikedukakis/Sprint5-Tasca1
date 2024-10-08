@@ -24,16 +24,21 @@ public class Player {
     @Transient
     private Hand hand;
 
+    public Player() {
+        this.hand = new Hand();
+    }
 
     public Player(String name) {
         this.name = name;
         this.wins = 0;
         this.losses = 0;
+        this.hand = new Hand();
     }
 
     public Player(int id, String name) {
         this.id = id;
         this.name = name;
+        this.hand = new Hand();
     }
 
     @Override

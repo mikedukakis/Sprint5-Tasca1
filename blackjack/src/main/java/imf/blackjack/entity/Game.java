@@ -7,14 +7,25 @@ import lombok.Data;
 @Schema(description = "Game entity representing each game")
 public class Game {
     private String id;
+    private int playerId;
     private Player player;
     private Dealer dealer;
     private Deck deck;
     private String winner;
     private boolean isGameOver;
 
+    public Game() {}
+
     public Game(Player player) {
         this.player = player;
+        this.playerId = player.getId();
+        this.dealer = new Dealer();
+        this.deck = new Deck();
+        this.isGameOver = false;
+    }
+
+    public Game(int playerId, String playerName) {
+        this.player = new Player(playerId, playerName);
         this.dealer = new Dealer();
         this.deck = new Deck();
         this.isGameOver = false;

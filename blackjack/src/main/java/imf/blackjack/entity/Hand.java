@@ -8,13 +8,16 @@ import java.util.ArrayList;
 @Data
 public class Hand {
     private List<Card> cards;
+    private int score;
 
     public Hand() {
         this.cards = new ArrayList<>();
+        this.score = 0;
     }
 
     public void addCard(Card card) {
         cards.add(card);
+        getScore();
     }
 
     public int getScore() {

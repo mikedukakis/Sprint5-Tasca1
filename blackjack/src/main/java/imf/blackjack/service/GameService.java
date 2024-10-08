@@ -3,9 +3,10 @@ package imf.blackjack.service;
 import imf.blackjack.entity.Deck;
 import imf.blackjack.entity.Game;
 import imf.blackjack.entity.Hand;
-import imf.blackjack.entity.Player;
 import imf.blackjack.exception.GameNotFoundException;
+import imf.blackjack.exception.PlayerNotFoundException;
 import imf.blackjack.repository.GameRepository;
+import imf.blackjack.repository.PlayerRepository;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -15,12 +16,16 @@ import reactor.core.publisher.Mono;
 public class GameService {
 
     private final GameRepository gameRepository;
+    private final PlayerRepository playerRepository;
 
-    public Mono<Game> createNewGame(String playerName) {
-        Player player = new Player(playerName);
-        Game game = new Game(player);
-        dealInitialCards(game);
-        return gameRepository.save(game);
+    public Mono<Game> createNewGame(String playerId) {
+        return playerRepository.findById(playerId)
+                .flatMap(player -> {
+                            Game game = new Game(player.getId(), player.getName());
+                            dealInitialCards(game);
+                            return gameRepository.save(game);
+                        })
+                .switchIfEmpty(Mono.error(new PlayerNotFoundException("Player not found with Id: " + playerId)));
     }
 
     public Mono<Game> getGameDetails(String gameId) {
@@ -35,10 +40,16 @@ public class GameService {
     }
 
     private void dealInitialCards(Game game) {
-        Deck deck = new Deck();
+        Deck deck = game.getDeck();
 
-        game.getPlayer().getHand().addCard(deck.drawCard());
-        game.getPlayer().getHand().addCard(deck.drawCard());
+        Hand playerHand = game.getPlayer().getHand();
+        if (playerHand == null) {
+            playerHand = new Hand();
+            game.getPlayer().setHand(playerHand);
+        }
+
+        playerHand.addCard(deck.drawCard());
+        playerHand.addCard(deck.drawCard());
         game.getDealer().getHand().addCard(deck.drawCard());
         game.getDealer().getHand().addCard(deck.drawCard());
     }

@@ -18,18 +18,19 @@ public class GameController {
     private final GameService gameService;
 
     @Operation(summary = "Create a new game", description = "Creates a new game with the given player.")
-    @ApiResponse(responseCode = "201", description = "Game created successfully")
+    @ApiResponse(responseCode = "200", description = "Game created successfully")
     @ApiResponse(responseCode = "500", description = "Game couldn't be created")
     @PostMapping("/new")
-    public Mono<Game> createNewGame(@RequestBody String playerName) {
-        return gameService.createNewGame(playerName);
+    public Mono<Game> createNewGame(@RequestParam String playerId) {
+        return gameService.createNewGame(playerId);
     }
 
     @Operation(summary = "Get details of game", description = "Get the details of the game using the game Id")
     @ApiResponse(responseCode = "200", description = "Details provided successfully")
+    @ApiResponse(responseCode = "500", description = "Couldn't access the details")
     @GetMapping("/{gameId}")
-    public Mono<Game> getGameDetails(@PathVariable String id) {
-        return gameService.getGameDetails(id);
+    public Mono<Game> getGameDetails(@PathVariable String gameId) {
+        return gameService.getGameDetails(gameId);
     }
 
     @Operation(summary = "Make a move", description = "Make a move in the game")
