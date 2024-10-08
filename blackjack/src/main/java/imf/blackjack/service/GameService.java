@@ -1,5 +1,6 @@
 package imf.blackjack.service;
 
+import imf.blackjack.entity.Deck;
 import imf.blackjack.entity.Game;
 import imf.blackjack.entity.Hand;
 import imf.blackjack.entity.Player;
@@ -18,6 +19,7 @@ public class GameService {
     public Mono<Game> createNewGame(String playerName) {
         Player player = new Player(playerName);
         Game game = new Game(player);
+        dealInitialCards(game);
         return gameRepository.save(game);
     }
 
@@ -32,13 +34,14 @@ public class GameService {
                 .flatMap(gameRepository::delete);
     }
 
-//    private void dealInitialCards(Game game) {
-//        Deck deck = game.getDeck();
-//        game.getPlayer().getHand().addCard(deck.drawCard());
-//        game.getPlayer().getHand().addCard(deck.drawCard());
-//        game.getDealer().getHand().addCard(deck.drawCard());
-//        game.getDealer().getHand().addCard(deck.drawCard());
-//    }
+    private void dealInitialCards(Game game) {
+        Deck deck = new Deck();
+
+        game.getPlayer().getHand().addCard(deck.drawCard());
+        game.getPlayer().getHand().addCard(deck.drawCard());
+        game.getDealer().getHand().addCard(deck.drawCard());
+        game.getDealer().getHand().addCard(deck.drawCard());
+    }
 
     public Mono<Game> makeMove(String gameId, String moveType) {
         return gameRepository.findById(gameId)

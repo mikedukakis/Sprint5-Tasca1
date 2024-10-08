@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 public class GameController {
     private final GameService gameService;
 
-    @Operation(summary = "Create a new game", description = "Creates a new game with the player given.")
+    @Operation(summary = "Create a new game", description = "Creates a new game with the given player.")
     @ApiResponse(responseCode = "201", description = "Game created successfully")
     @PostMapping("/new")
     public Mono<Game> createNewGame(@RequestBody String playerName) {
