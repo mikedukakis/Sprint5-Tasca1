@@ -26,18 +26,18 @@ This project consists of creating and managing a Blackjack game, incorporating g
 
     1. Clone this repository:
 
-    ```git clone https://github.com/mikedukakis/Sprint5-Tasca1.git```
+    git clone https://github.com/mikedukakis/Sprint5-Tasca1.git
 
     2. Navigate to the project directory:
 
-    `cd blackjack`
+    cd blackjack
 
     3. Install dependencies using Maven:
 
-    `mvn clean install`
+    mvn clean install
 
     4. Configure the application:
-        - Update your MongoDB connection details in `application.properties` under the `src/main/resources` directory.
+        - Update your MongoDB connection details in application.properties under the src/main/resources directory.
         - Set up your MySQL connection details in the same file.
 
 ▶️ Execution
@@ -46,9 +46,9 @@ This project consists of creating and managing a Blackjack game, incorporating g
     
     2. Start the application:
 
-    `mvn spring-boot:run`
+    mvn spring-boot:run
 
-    3.  The application will be available at `http://localhost:8080`
+    3.  The application will be available at http://localhost:8080
 
 🌐 Deployment
 
@@ -65,14 +65,14 @@ Contributions are welcome! Please follow the steps below to contribute:
     
     2.  Create a new branch:
 
-      `git checkout -b feature/NewFeature`
+      git checkout -b feature/NewFeature
 
     3.  Make your changes and commit them:
 
-      `git commit -m 'Add New Feature'`
+      git commit -m 'Add New Feature'
 
     4.  Push the changes to your branch:
 
-      `git push origin feature/NewFeature`
+      git push origin feature/NewFeature
 
     5.  Create a pull request.
