@@ -5,7 +5,6 @@ import imf.blackjack.exception.PlayerNotFoundException;
 import imf.blackjack.repository.PlayerRepository;
 import lombok.Data;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -31,6 +30,6 @@ public class PlayerService {
     }
 
     public Flux<Player> getPlayerRanking() {
-        return playerRepository.findPlayersOrderedByWins();
+        return playerRepository.findByOrderByWinsDesc();
     }
 }

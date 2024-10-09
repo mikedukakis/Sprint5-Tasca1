@@ -1,8 +1,8 @@
 package imf.blackjack.service;
 
+import imf.blackjack.entity.Card;
 import imf.blackjack.entity.Deck;
 import imf.blackjack.entity.Game;
-import imf.blackjack.entity.Hand;
 import imf.blackjack.exception.GameNotFoundException;
 import imf.blackjack.exception.PlayerNotFoundException;
 import imf.blackjack.repository.GameRepository;
@@ -10,6 +10,8 @@ import imf.blackjack.repository.PlayerRepository;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Data
 @Service
@@ -36,14 +38,11 @@ public class GameService {
     private void dealInitialCards(Game game) {
         Deck deck = game.getDeck();
 
-        Hand playerHand = game.getPlayer().getHand();
-        if (playerHand == null) {
-            playerHand = new Hand();
-            game.getPlayer().setHand(playerHand);
+        if (game.getPlayerHand().getFirst() == null) {
+            game.getPlayerHand().add(deck.drawCard());
+            game.getPlayerHand().add(deck.drawCard());
         }
 
-        playerHand.addCard(deck.drawCard());
-        playerHand.addCard(deck.drawCard());
         game.getDealer().getHand().addCard(deck.drawCard());
         game.getDealer().getHand().addCard(deck.drawCard());
     }
@@ -63,20 +62,20 @@ public class GameService {
 
 
     private Mono<Game> playerHit(Game game) {
-        game.getPlayer().getHand().addCard(game.getDeck().drawCard());
-        if (calculateScore(game.getPlayer().getHand()) > 21) {
+        game.getPlayerHand().add(game.getDeck().drawCard());
+        if (calculateScore(game.getPlayerHand()) > 21) {
             game.endGame("dealer");
         }
         return gameRepository.save(game);
     }
 
     private Mono<Game> dealerPlay(Game game) {
-        while (calculateScore(game.getDealer().getHand()) < 17) {
+        while (calculateScore(game.getDealer().getHand().getCards()) < 17) {
             game.getDealer().getHand().addCard(game.getDeck().drawCard());
         }
 
-        int dealerScore = calculateScore(game.getDealer().getHand());
-        int playerScore = calculateScore(game.getPlayer().getHand());
+        int dealerScore = calculateScore(game.getDealer().getHand().getCards());
+        int playerScore = calculateScore(game.getPlayerHand());
 
         String winner;
         if (dealerScore > 21 || playerScore > dealerScore) {
@@ -100,26 +99,28 @@ public class GameService {
     private Mono<Void> updatePlayerStats(String playerId, String winner) {
         return playerRepository.findById(playerId)
                 .flatMap(player -> {
-                    int updatedWins = player.getWins();
-                    int updatedLosses = player.getLosses();
-
                     if ("player".equals(winner)) {
-                        updatedWins++;
-                        System.out.println("Player wins updated to: " + updatedWins);
+                        player.setWins(player.getWins() + 1);
+                        System.out.println("Player wins updated to: " + player.getWins());
                     } else if ("dealer".equals(winner)) {
-                        updatedLosses++;
-                        System.out.println("Player losses updated to: " + updatedLosses);
+                        player.setLosses(player.getLosses() + 1);
+                        System.out.println("Player losses updated to: " + player.getLosses());
                     }
 
-                    return playerRepository.updatePlayerStats(playerId, updatedWins, updatedLosses)
-                            .doOnSuccess(unused -> System.out.println("Player stats successfully updated in MySQL"));
+                    return playerRepository.save(player)
+                            .doOnSuccess(savedPlayer -> System.out.println("Player stats successfully updated in MySQL"));
                 })
+                .then()
                 .doOnError(error -> System.err.println("Error updating player stats in MySQL: " + error.getMessage()));
     }
 
 
-    private int calculateScore(Hand hand) {
-        return hand.getScore();
+    private int calculateScore(List<Card> cards) {
+        int score = 0;
+        for (Card card : cards) {
+            score += Integer.parseInt(card.getValue().toString());
+        }
+        return score;
     }
 
     public Mono<Void> deleteGame(String gameId) {
