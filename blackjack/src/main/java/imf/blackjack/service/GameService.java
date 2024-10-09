@@ -112,6 +112,7 @@ public class GameService {
 
                     return playerRepository.save(player);
                 })
+                .switchIfEmpty(Mono.error(new PlayerNotFoundException("Player not found with Id: " + playerId)))
                 .then();
     }
 
