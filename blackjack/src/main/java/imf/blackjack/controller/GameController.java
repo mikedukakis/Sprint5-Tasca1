@@ -33,7 +33,7 @@ public class GameController {
         return gameService.getGameDetails(gameId);
     }
 
-    @Operation(summary = "Make a move", description = "Make a move in the game ('HIT' or 'STAND'")
+    @Operation(summary = "Make a move", description = "Make a move in the game ('HIT' or 'STAND')")
     @ApiResponse(responseCode = "200", description = "Make a move and get result of move and current state of game")
     @PutMapping("/{gameId}/move")
     public Mono<Game> makeMove(@PathVariable String gameId, @RequestParam String move) {

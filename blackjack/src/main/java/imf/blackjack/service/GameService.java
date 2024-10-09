@@ -92,7 +92,7 @@ public class GameService {
 
         return gameRepository.save(game)
                 .flatMap(savedGame -> {
-                    return updatePlayerStats(game.getPlayer().getId(), winner)
+                    return updatePlayerStats(game.getPlayer().getId(), game.getWinner())
                             .thenReturn(savedGame);
                 });
     }
@@ -100,14 +100,21 @@ public class GameService {
     private Mono<Void> updatePlayerStats(String playerId, String winner) {
         return playerRepository.findById(playerId)
                 .flatMap(player -> {
+                    int updatedWins = player.getWins();
+                    int updatedLosses = player.getLosses();
+
                     if ("player".equals(winner)) {
-                        player.setWins(player.getWins() + 1);
+                        updatedWins++;
+                        System.out.println("Player wins updated to: " + updatedWins);
                     } else if ("dealer".equals(winner)) {
-                        player.setLosses(player.getLosses() + 1);
+                        updatedLosses++;
+                        System.out.println("Player losses updated to: " + updatedLosses);
                     }
-                    return playerRepository.save(player);
+
+                    return playerRepository.updatePlayerStats(playerId, updatedWins, updatedLosses)
+                            .doOnSuccess(unused -> System.out.println("Player stats successfully updated in MySQL"));
                 })
-                .then();
+                .doOnError(error -> System.err.println("Error updating player stats in MySQL: " + error.getMessage()));
     }
 
 
