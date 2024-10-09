@@ -9,6 +9,7 @@ import imf.blackjack.repository.GameRepository;
 import imf.blackjack.repository.PlayerRepository;
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -38,13 +39,17 @@ public class GameService {
     private void dealInitialCards(Game game) {
         Deck deck = game.getDeck();
 
-        if (game.getPlayerHand().getFirst() == null) {
+        if (game.getPlayerHand().isEmpty()) {
             game.getPlayerHand().add(deck.drawCard());
             game.getPlayerHand().add(deck.drawCard());
         }
 
+        game.setPlayerScore(calculateScore(game.getPlayerHand()));
+
         game.getDealer().getHand().addCard(deck.drawCard());
         game.getDealer().getHand().addCard(deck.drawCard());
+
+        game.getDealer().getHand().setScore(calculateScore(game.getDealer().getHand().getCards()));
     }
 
     public Mono<Game> makeMove(String gameId, String moveType) {
@@ -60,15 +65,17 @@ public class GameService {
                 });
     }
 
-
     private Mono<Game> playerHit(Game game) {
         game.getPlayerHand().add(game.getDeck().drawCard());
+        game.setPlayerScore(calculateScore(game.getPlayerHand()));
+
         if (calculateScore(game.getPlayerHand()) > 21) {
             game.endGame("dealer");
         }
         return gameRepository.save(game);
     }
 
+    @Transactional
     private Mono<Game> dealerPlay(Game game) {
         while (calculateScore(game.getDealer().getHand().getCards()) < 17) {
             game.getDealer().getHand().addCard(game.getDeck().drawCard());
@@ -90,10 +97,8 @@ public class GameService {
         }
 
         return gameRepository.save(game)
-                .flatMap(savedGame -> {
-                    return updatePlayerStats(game.getPlayer().getId(), game.getWinner())
-                            .thenReturn(savedGame);
-                });
+                .flatMap(savedGame -> updatePlayerStats(game.getPlayer().getId(), game.getWinner())
+                        .thenReturn(savedGame));
     }
 
     private Mono<Void> updatePlayerStats(String playerId, String winner) {
@@ -101,25 +106,70 @@ public class GameService {
                 .flatMap(player -> {
                     if ("player".equals(winner)) {
                         player.setWins(player.getWins() + 1);
-                        System.out.println("Player wins updated to: " + player.getWins());
                     } else if ("dealer".equals(winner)) {
                         player.setLosses(player.getLosses() + 1);
-                        System.out.println("Player losses updated to: " + player.getLosses());
                     }
 
-                    return playerRepository.save(player)
-                            .doOnSuccess(savedPlayer -> System.out.println("Player stats successfully updated in MySQL"));
+                    return playerRepository.save(player);
                 })
-                .then()
-                .doOnError(error -> System.err.println("Error updating player stats in MySQL: " + error.getMessage()));
+                .then();
     }
+
 
 
     private int calculateScore(List<Card> cards) {
         int score = 0;
+        int aces = 0;
+
         for (Card card : cards) {
-            score += Integer.parseInt(card.getValue().toString());
+            String value = String.valueOf(card.getValue());
+
+            switch (value) {
+                case "TWO":
+                    score += 2;
+                    break;
+                case "THREE":
+                    score += 3;
+                    break;
+                case "FOUR":
+                    score += 4;
+                    break;
+                case "FIVE":
+                    score += 5;
+                    break;
+                case "SIX":
+                    score += 6;
+                    break;
+                case "SEVEN":
+                    score += 7;
+                    break;
+                case "EIGHT":
+                    score += 8;
+                    break;
+                case "NINE":
+                    score += 9;
+                    break;
+                case "TEN":
+                case "JACK":
+                case "QUEEN":
+                case "KING":
+                    score += 10;
+                    break;
+                case "ACE":
+                    aces += 1;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown card value: " + value);
+            }
+        }for (int i = 0; i < aces; i++) {
+            // If adding 11 keeps us under or at 21, count ace as 11, otherwise as 1
+            if (score + 11 <= 21) {
+                score += 11;
+            } else {
+                score += 1;
+            }
         }
+
         return score;
     }
 

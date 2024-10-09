@@ -13,6 +13,7 @@ public class Game {
     private String playerId;
     private Player player;
     private List<Card> playerHand;
+    private int playerScore;
     private Dealer dealer;
     private Deck deck;
     private String winner;
@@ -24,6 +25,7 @@ public class Game {
         this.player = player;
         this.playerId = player.getId();
         this.playerHand = new ArrayList<>();
+        this.playerScore = 0;
         this.dealer = new Dealer();
         this.deck = new Deck();
         this.isGameOver = false;
@@ -32,6 +34,7 @@ public class Game {
     public Game(String playerId, String playerName) {
         this.player = new Player(playerId, playerName);
         this.playerHand = new ArrayList<>();
+        this.playerScore = 0;
         this.dealer = new Dealer();
         this.deck = new Deck();
         this.isGameOver = false;

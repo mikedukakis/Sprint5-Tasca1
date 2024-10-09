@@ -1,11 +1,15 @@
 package imf.blackjack.entity;
 
+
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Data
 public class Deck {
-    private final List<Card> cards;
+    private List<Card> cards;
 
     public Deck() {
         cards = new ArrayList<>();
