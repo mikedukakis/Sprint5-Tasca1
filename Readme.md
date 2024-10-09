@@ -26,11 +26,11 @@ This project consists of creating and managing a Blackjack game, incorporating g
 
     1. Clone this repository:
 
-    `git clone https://github.com/mikedukakis/Sprint5-Tasca1.git`
+    ```git clone https://github.com/mikedukakis/Sprint5-Tasca1.git```
 
     2. Navigate to the project directory:
 
-    `cd blackjack-game`
+    `cd blackjack`
 
     3. Install dependencies using Maven:
 
